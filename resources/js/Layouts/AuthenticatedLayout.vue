@@ -39,6 +39,9 @@ const showingNavigationDropdown = ref(false);
                                 >
                                     Dashboard
                                 </NavLink>
+                                <NavLink :href="route('library')" :active="route().current('library')">
+                                    Library
+                                </NavLink>
                             </div>
                         </div>
 

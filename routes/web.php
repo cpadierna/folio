@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\BookLogController;
+use App\Http\Controllers\LibraryController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -31,5 +32,7 @@ Route::get('/books/{googleBooksId}', [BookController::class, 'show'])->name('boo
 
 Route::post('/books/{book}/log', [BookLogController::class, 'store'])->name('books.log.store');
 Route::delete('/books/{book}/log', [BookLogController::class, 'destroy'])->name('books.log.destroy');
+
+Route::get('/library', [LibraryController::class, 'index'])->name('library');
 
 require __DIR__.'/auth.php';
