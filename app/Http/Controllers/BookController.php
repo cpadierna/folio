@@ -32,8 +32,11 @@ class BookController extends Controller
             $this->googleBooks->find($googleBooksId) ?? []
         );
 
+        $log = auth()->user()->bookLogs()->where('book_id', $book->id)->first();
+
         return Inertia::render('Books/Show', [
             'book' => $book,
+            'log' => $log,
         ]);
     }
 }

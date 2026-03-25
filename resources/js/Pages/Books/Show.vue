@@ -1,10 +1,25 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
+import { Head, useForm } from '@inertiajs/vue3';
 
 const props = defineProps({
     book: Object,
+    log: Object,
 });
+
+const form = useForm({
+    status: props.log?.status ?? 'want_to_read',
+    rating: props.log?.rating ?? null,
+    notes: props.log?.notes ?? '',
+});
+
+function submit() {
+    form.post(`/books/${props.book.id}/log`);
+}
+
+function removeLog() {
+    form.delete(`/books/${props.book.id}/log`);
+}
 </script>
 
 <template>
@@ -20,12 +35,76 @@ const props = defineProps({
                     :alt="book.title"
                     class="w-32 h-auto object-contain shrink-0"
                 />
-
                 <div>
                     <h1 class="text-2xl font-bold">{{ book.title }}</h1>
                     <p v-if="book.author" class="text-gray-600 mt-1">{{ book.author }}</p>
                     <p v-if="book.published_date" class="text-gray-400 text-sm mt-1">{{ book.published_date }}</p>
                     <p v-if="book.description" class="mt-4 text-gray-700 text-sm leading-relaxed">{{ book.description }}</p>
+                </div>
+            </div>
+
+            <!-- Log Form -->
+            <div class="mt-8 border-t pt-6">
+                <h2 class="text-lg font-semibold mb-4">{{ log ? 'Update Your Log' : 'Add to Your Library' }}</h2>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                        <select v-model="form.status" class="border rounded px-3 py-2 w-full max-w-xs">
+                            <option value="want_to_read">Want to Read</option>
+                            <option value="reading">Currently Reading</option>
+                            <option value="read">Read</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Rating (optional)</label>
+                        <select v-model="form.rating" class="border rounded px-3 py-2 w-full max-w-xs">
+                            <option :value="null">No rating</option>
+                            <option value="1">1 ★</option>
+                            <option value="1.5">1.5 ★</option>
+                            <option value="2">2 ★</option>
+                            <option value="2.5">2.5 ★</option>
+                            <option value="3">3 ★</option>
+                            <option value="3.5">3.5 ★</option>
+                            <option value="4">4 ★</option>
+                            <option value="4.5">4.5 ★</option>
+                            <option value="5">5 ★</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Notes (optional)</label>
+                        <textarea
+                            v-model="form.notes"
+                            rows="3"
+                            class="border rounded px-3 py-2 w-full"
+                            placeholder="Your thoughts..."
+                        ></textarea>
+                    </div>
+
+                    <div class="flex gap-3">
+                        <button
+                            @click="submit"
+                            :disabled="form.processing"
+                            class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+                        >
+                            {{ log ? 'Update' : 'Add to Library' }}
+                        </button>
+
+                        <button
+                            v-if="log"
+                            @click="removeLog"
+                            :disabled="form.processing"
+                            class="bg-red-100 text-red-600 px-6 py-2 rounded hover:bg-red-200 disabled:opacity-50"
+                        >
+                            Remove
+                        </button>
+                    </div>
+
+                    <p v-if="$page.props.flash?.success" class="text-green-600 text-sm">
+                        {{ $page.props.flash.success }}
+                    </p>
                 </div>
             </div>
         </div>

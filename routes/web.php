@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BookController;
+use App\Http\Controllers\BookLogController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -27,5 +28,8 @@ Route::middleware('auth')->group(function () {
 
 Route::get('/books/search', [BookController::class, 'search'])->name('books.search');
 Route::get('/books/{googleBooksId}', [BookController::class, 'show'])->name('books.show');
+
+Route::post('/books/{book}/log', [BookLogController::class, 'store'])->name('books.log.store');
+Route::delete('/books/{book}/log', [BookLogController::class, 'destroy'])->name('books.log.destroy');
 
 require __DIR__.'/auth.php';
