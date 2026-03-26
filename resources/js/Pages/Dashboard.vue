@@ -7,23 +7,16 @@ import { Head } from '@inertiajs/vue3';
     <Head title="Dashboard" />
 
     <AuthenticatedLayout>
-        <template #header>
-            <h2
-                class="text-xl font-semibold leading-tight text-gray-800"
-            >
-                Dashboard
-            </h2>
-        </template>
-
-        <div class="py-12">
-            <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                <div
-                    class="overflow-hidden bg-white shadow-sm sm:rounded-lg"
-                >
-                    <div class="p-6 text-gray-900">
-                        You're logged in!
-                    </div>
-                </div>
+        <div class="max-w-4xl mx-auto py-8 px-4">
+            <h1 class="text-2xl font-bold mb-2">Welcome back, {{ $page.props.auth.user.name }}</h1>
+            <p class="text-gray-600 mb-6">What are you reading?</p>
+            <div class="flex gap-4">
+                <a href="/books/search" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
+                    Search Books
+                </a>
+                <a href="/library" class="border px-6 py-2 rounded hover:bg-gray-50">
+                    My Library
+                </a>
             </div>
         </div>
     </AuthenticatedLayout>

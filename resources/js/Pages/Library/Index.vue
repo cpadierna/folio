@@ -19,7 +19,12 @@ const statusOrder = ['reading', 'want_to_read', 'read'];
     <Head title="My Library" />
     <AuthenticatedLayout>
         <div class="max-w-4xl mx-auto py-8 px-4">
-            <h1 class="text-2xl font-bold mb-8">My Library</h1>
+            <h1 class="text-2xl font-bold mb-8">
+                My Library
+                <span class="text-gray-400 font-normal text-lg ml-2">
+                    ({{ Object.values(logs).flat().length }} books)
+                </span>
+            </h1>
 
             <div v-if="Object.keys(logs).length === 0" class="text-gray-500">
                 You haven't logged any books yet.
