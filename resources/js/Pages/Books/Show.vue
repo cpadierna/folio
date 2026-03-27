@@ -39,7 +39,7 @@ function removeLog() {
                     <h1 class="text-2xl font-bold">{{ book.title }}</h1>
                     <p v-if="book.author" class="text-gray-600 mt-1">{{ book.author }}</p>
                     <p v-if="book.published_date" class="text-gray-400 text-sm mt-1">{{ book.published_date }}</p>
-                    <p v-if="book.description" class="mt-4 text-gray-700 text-sm leading-relaxed">{{ book.description }}</p>
+                    <p v-if="book.description" class="mt-4 text-gray-700 text-sm leading-relaxed" v-html="book.description"></p>
                 </div>
             </div>
 
