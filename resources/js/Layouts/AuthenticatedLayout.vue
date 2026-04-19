@@ -45,6 +45,9 @@ const showingNavigationDropdown = ref(false);
                                 <NavLink :href="route('books.search')" :active="route().current('books.search')">
                                     Search
                                 </NavLink>
+                                <NavLink :href="route('feed')" :active="route().current('feed')">
+                                    Feed
+                                </NavLink>
                             </div>
                         </div>
 
@@ -81,6 +84,9 @@ const showingNavigationDropdown = ref(false);
                                             :href="route('profile.edit')"
                                         >
                                             Profile
+                                        </DropdownLink>
+                                        <DropdownLink :href="route('users.show', { user: $page.props.auth.user.id })">
+                                            My Profile
                                         </DropdownLink>
                                         <DropdownLink
                                             :href="route('logout')"
@@ -151,6 +157,9 @@ const showingNavigationDropdown = ref(false);
                             :active="route().current('dashboard')"
                         >
                             Dashboard
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('feed')" :active="route().current('feed')">
+                            Feed
                         </ResponsiveNavLink>
                     </div>
 

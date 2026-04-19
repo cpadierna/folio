@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\FeedController;
+use App\Http\Controllers\FollowController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\BookLogController;
@@ -34,5 +36,11 @@ Route::post('/books/{book}/log', [BookLogController::class, 'store'])->name('boo
 Route::delete('/books/{book}/log', [BookLogController::class, 'destroy'])->name('books.log.destroy');
 
 Route::get('/library', [LibraryController::class, 'index'])->name('library');
+Route::get('/feed', [FeedController::class, 'index'])->middleware('auth')->name('feed');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/users/{user}', [ProfileController::class, 'show'])->name('users.show');
+    Route::post('/users/{user}/follow', [FollowController::class, 'toggle'])->name('users.follow');
+});
 
 require __DIR__.'/auth.php';

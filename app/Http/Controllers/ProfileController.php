@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\User;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -13,6 +14,20 @@ use Inertia\Response;
 
 class ProfileController extends Controller
 {
+    public function show(User $user): Response
+    {
+        return Inertia::render('Profile/Show', [
+            'profileUser' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'followersCount' => $user->followers()->count(),
+                'followingCount' => $user->following()->count(),
+                'isFollowing' => auth()->user()->following()->where('following_id', $user->id)->exists(),
+            ],
+            'bookLogs' => $user->bookLogs()->with('book')->latest()->take(6)->get(),
+        ]);
+    }
+
     /**
      * Display the user's profile form.
      */
