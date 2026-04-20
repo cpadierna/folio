@@ -50,62 +50,74 @@ function formatDate(dateStr) {
 
             <!-- Log entries -->
             <div v-else class="space-y-4">
-                <Link
+                <article
                     v-for="log in logs.data"
                     :key="log.id"
-                    :href="route('book_logs.show', log.id)"
                     class="flex gap-4 border rounded-lg p-4 hover:shadow-sm transition"
                 >
                     <!-- Cover -->
-                    <a :href="`/books/${log.book.google_books_id}`" class="shrink-0">
+                    <Link
+                        :href="`/books/${log.book.google_books_id}`"
+                        class="shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:rounded"
+                        :aria-label="`View book: ${log.book.title}`"
+                    >
                         <img
                             v-if="log.book.cover_image_url"
                             :src="log.book.cover_image_url"
-                            :alt="log.book.title"
+                            :alt="log.book.title + ' cover'"
                             class="w-14 h-20 object-contain rounded"
                         />
                         <div
                             v-else
-                            class="w-14 h-20 bg-gray-100 rounded flex items-center justify-center text-gray-300 text-xs"
+                            class="w-14 h-20 bg-gray-100 rounded flex items-center justify-center text-gray-500 text-xs"
+                            aria-hidden="true"
                         >
                             No cover
                         </div>
-                    </a>
+                    </Link>
 
                     <!-- Details -->
                     <div class="flex-1 min-w-0">
                         <div class="flex items-start justify-between gap-2">
                             <div class="min-w-0">
-                                <a
-                                    :href="`/books/${log.book.google_books_id}`"
-                                    class="font-semibold text-sm leading-tight hover:underline block truncate"
+                                <Link
+                                    :href="route('book_logs.show', log.id)"
+                                    class="font-semibold text-sm leading-tight hover:underline block truncate focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:rounded"
                                 >
                                     {{ log.book.title }}
-                                </a>
+                                </Link>
                                 <div class="text-xs text-gray-500 mt-0.5">{{ log.book.author }}</div>
                             </div>
-                            <span class="text-xs text-gray-400 shrink-0">{{ formatDate(log.created_at) }}</span>
+                            <span class="text-xs text-gray-600 shrink-0">{{ formatDate(log.created_at) }}</span>
                         </div>
 
                         <div class="flex items-center gap-2 mt-2 flex-wrap">
                             <span
                                 :class="statusClasses[log.status]"
                                 class="text-xs font-medium px-2 py-0.5 rounded-full"
+                                role="status"
                             >
                                 {{ statusLabels[log.status] }}
                             </span>
-                            <span v-if="log.rating" class="text-xs text-yellow-500">
+                            <span
+                                v-if="log.rating"
+                                class="text-xs text-yellow-500"
+                                :aria-label="`Rating: ${log.rating} out of 5`"
+                            >
                                 {{ log.rating }} ★
                             </span>
                         </div>
 
                         <div class="mt-2 text-xs text-gray-500">
-                            <Link :href="`/users/${log.user.id}`" class="hover:underline font-medium text-gray-700">
+                            <Link
+                                :href="`/users/${log.user.id}`"
+                                class="hover:underline font-medium text-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:rounded"
+                            >
                                 {{ log.user.name }}
                             </Link>
                         </div>
                     </div>
-                </Link>
+                </article>
             </div>
 
             <!-- Pagination -->
@@ -115,9 +127,9 @@ function formatDate(dateStr) {
                     :key="link.label"
                     :href="link.url ?? '#'"
                     :class="[
-                        'px-3 py-1.5 text-sm rounded border transition',
+                        'px-3 py-1.5 text-sm rounded border transition focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2',
                         link.active
-                            ? 'bg-blue-600 text-white border-blue-600'
+                            ? 'bg-indigo-600 text-white border-indigo-600'
                             : 'text-gray-600 border-gray-300 hover:bg-gray-50',
                         !link.url ? 'opacity-40 pointer-events-none' : '',
                     ]"

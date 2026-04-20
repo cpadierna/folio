@@ -39,10 +39,11 @@ function toggleFollow() {
                 <button
                     v-if="profileUser.id !== $page.props.auth.user.id"
                     @click="toggleFollow"
+                    :aria-label="profileUser.isFollowing ? `Unfollow ${profileUser.name}` : `Follow ${profileUser.name}`"
                     :class="profileUser.isFollowing
                         ? 'border border-gray-300 text-gray-700 hover:bg-gray-50'
-                        : 'bg-blue-600 text-white hover:bg-blue-700'"
-                    class="px-5 py-2 rounded text-sm font-medium transition"
+                        : 'bg-indigo-600 text-white hover:bg-indigo-700'"
+                    class="px-5 py-2 rounded text-sm font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
                 >
                     {{ profileUser.isFollowing ? 'Unfollow' : 'Follow' }}
                 </button>
@@ -61,19 +62,23 @@ function toggleFollow() {
                         v-for="log in bookLogs"
                         :key="log.id"
                         :href="route('book_logs.show', log.id)"
-                        class="block border rounded p-3 hover:shadow-md transition"
+                        class="block border rounded p-3 hover:shadow-md transition focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:rounded"
                     >
                         <img
                             v-if="log.book.cover_image_url"
                             :src="log.book.cover_image_url"
-                            :alt="log.book.title"
+                            :alt="log.book.title + ' cover'"
                             class="w-full h-40 object-contain mb-2"
                         />
                         <div class="text-sm font-semibold leading-tight">{{ log.book.title }}</div>
                         <div class="text-xs text-gray-500 mt-0.5">{{ log.book.author }}</div>
                         <div class="flex items-center justify-between mt-1.5">
-                            <span class="text-xs text-gray-400">{{ statusLabels[log.status] }}</span>
-                            <span v-if="log.rating" class="text-xs text-yellow-500">{{ log.rating }} ★</span>
+                            <span class="text-xs text-gray-600" role="status">{{ statusLabels[log.status] }}</span>
+                            <span
+                                v-if="log.rating"
+                                class="text-xs text-yellow-500"
+                                :aria-label="`Rating: ${log.rating} out of 5`"
+                            >{{ log.rating }} ★</span>
                         </div>
                     </Link>
                 </div>

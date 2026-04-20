@@ -26,13 +26,13 @@ function removeLog() {
     <Head :title="book.title" />
     <AuthenticatedLayout>
         <div class="max-w-3xl mx-auto py-8 px-4">
-            <a href="/books/search" class="text-blue-600 text-sm hover:underline">← Back to Search</a>
+            <a href="/books/search" class="text-indigo-600 text-sm hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:rounded">← Back to Search</a>
 
             <div class="flex gap-8 mt-6">
                 <img
                     v-if="book.cover_image_url"
                     :src="book.cover_image_url"
-                    :alt="book.title"
+                    :alt="book.title + ' cover'"
                     class="w-32 h-auto object-contain shrink-0"
                 />
                 <div>
@@ -49,8 +49,8 @@ function removeLog() {
 
                 <div class="space-y-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                        <select v-model="form.status" class="border rounded px-3 py-2 w-full max-w-xs">
+                        <label for="book-status" class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                        <select id="book-status" v-model="form.status" aria-required="true" class="border rounded px-3 py-2 w-full max-w-xs focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2">
                             <option value="want_to_read">Want to Read</option>
                             <option value="reading">Currently Reading</option>
                             <option value="read">Read</option>
@@ -58,8 +58,8 @@ function removeLog() {
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Rating (optional)</label>
-                        <select v-model="form.rating" class="border rounded px-3 py-2 w-full max-w-xs">
+                        <label for="book-rating" class="block text-sm font-medium text-gray-700 mb-1">Rating (optional)</label>
+                        <select id="book-rating" v-model="form.rating" class="border rounded px-3 py-2 w-full max-w-xs focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2">
                             <option :value="null">No rating</option>
                             <option value="1">1 ★</option>
                             <option value="1.5">1.5 ★</option>
@@ -74,11 +74,12 @@ function removeLog() {
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Notes (optional)</label>
+                        <label for="book-notes" class="block text-sm font-medium text-gray-700 mb-1">Notes (optional)</label>
                         <textarea
+                            id="book-notes"
                             v-model="form.notes"
                             rows="3"
-                            class="border rounded px-3 py-2 w-full"
+                            class="border rounded px-3 py-2 w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
                             placeholder="Your thoughts..."
                         ></textarea>
                     </div>
@@ -87,7 +88,7 @@ function removeLog() {
                         <button
                             @click="submit"
                             :disabled="form.processing"
-                            class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+                            class="bg-indigo-600 text-white px-6 py-2 rounded hover:bg-indigo-700 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
                         >
                             {{ log ? 'Update' : 'Add to Library' }}
                         </button>
@@ -96,7 +97,7 @@ function removeLog() {
                             v-if="log"
                             @click="removeLog"
                             :disabled="form.processing"
-                            class="bg-red-100 text-red-600 px-6 py-2 rounded hover:bg-red-200 disabled:opacity-50"
+                            class="bg-red-100 text-red-600 px-6 py-2 rounded hover:bg-red-200 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
                         >
                             Remove
                         </button>

@@ -22,16 +22,19 @@ function submitSearch() {
             <h1 class="text-2xl font-bold mb-6">Search Books</h1>
 
             <div class="flex gap-2 mb-8">
+                <label for="book-search" class="sr-only">Search books by title or author</label>
                 <input
+                    id="book-search"
                     v-model="search"
                     type="text"
                     placeholder="Search by title, author..."
-                    class="flex-1 border rounded px-4 py-2"
+                    class="flex-1 border rounded px-4 py-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
                     @keyup.enter="submitSearch"
+                    aria-label="Search books by title or author"
                 />
                 <button
                     @click="submitSearch"
-                    class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
+                    class="bg-indigo-600 text-white px-6 py-2 rounded hover:bg-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
                 >
                     Search
                 </button>
@@ -42,12 +45,12 @@ function submitSearch() {
                     v-for="book in results"
                     :key="book.google_books_id"
                     :href="`/books/${book.google_books_id}`"
-                    class="block border rounded p-3 hover:shadow-md transition"
+                    class="block border rounded p-3 hover:shadow-md transition focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:rounded"
                 >
                     <img
                         v-if="book.cover_image_url"
                         :src="book.cover_image_url"
-                        :alt="book.title"
+                        :alt="book.title + ' cover'"
                         class="w-full h-48 object-contain mb-3"
                     />
                     <div class="font-semibold text-sm">{{ book.title }}</div>

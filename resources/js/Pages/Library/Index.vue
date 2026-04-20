@@ -28,29 +28,33 @@ const statusOrder = ['reading', 'want_to_read', 'read'];
 
             <div v-if="Object.keys(logs).length === 0" class="text-gray-500">
                 You haven't logged any books yet.
-                <a href="/books/search" class="text-blue-600 hover:underline">Search for a book</a> to get started.
+                <a href="/books/search" class="text-indigo-600 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:rounded">Search for a book</a> to get started.
             </div>
 
             <div v-for="status in statusOrder" :key="status" class="mb-10">
                 <template v-if="logs[status]?.length">
                     <h2 class="text-lg font-semibold mb-4 border-b pb-2">{{ statusLabels[status] }}</h2>
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <article v-for="log in logs[status]" :key="log.id">
                         <a
-                            v-for="log in logs[status]"
-                            :key="log.id"
                             :href="`/books/${log.book.google_books_id}`"
-                            class="block border rounded p-3 hover:shadow-md transition"
+                            class="block border rounded p-3 hover:shadow-md transition focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:rounded"
                         >
                             <img
                                 v-if="log.book.cover_image_url"
                                 :src="log.book.cover_image_url"
-                                :alt="log.book.title"
+                                :alt="log.book.title + ' cover'"
                                 class="w-full h-40 object-contain mb-2"
                             />
                             <div class="text-sm font-semibold">{{ log.book.title }}</div>
                             <div class="text-xs text-gray-500">{{ log.book.author }}</div>
-                            <div v-if="log.rating" class="text-xs text-yellow-500 mt-1">{{ log.rating }} ★</div>
+                            <div
+                                v-if="log.rating"
+                                class="text-xs text-yellow-500 mt-1"
+                                :aria-label="`Rating: ${log.rating} out of 5`"
+                            >{{ log.rating }} ★</div>
                         </a>
+                        </article>
                     </div>
                 </template>
             </div>

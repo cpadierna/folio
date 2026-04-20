@@ -62,12 +62,13 @@ function formatDate(dateStr) {
                 <img
                     v-if="bookLog.book.cover_image_url"
                     :src="bookLog.book.cover_image_url"
-                    :alt="bookLog.book.title"
+                    :alt="bookLog.book.title + ' cover'"
                     class="w-20 h-28 object-contain rounded shadow-sm shrink-0"
                 />
                 <div
                     v-else
-                    class="w-20 h-28 bg-gray-100 rounded flex items-center justify-center text-gray-300 text-xs shrink-0"
+                    class="w-20 h-28 bg-gray-100 rounded flex items-center justify-center text-gray-500 text-xs shrink-0"
+                    aria-hidden="true"
                 >
                     No cover
                 </div>
@@ -80,10 +81,15 @@ function formatDate(dateStr) {
                         <span
                             :class="statusClasses[bookLog.status]"
                             class="text-xs font-medium px-2 py-0.5 rounded-full"
+                            role="status"
                         >
                             {{ statusLabels[bookLog.status] }}
                         </span>
-                        <span v-if="bookLog.rating" class="text-xs text-yellow-500 font-medium">
+                        <span
+                            v-if="bookLog.rating"
+                            class="text-xs text-yellow-500 font-medium"
+                            :aria-label="`Rating: ${bookLog.rating} out of 5`"
+                        >
                             {{ bookLog.rating }} ★
                         </span>
                     </div>
@@ -92,7 +98,7 @@ function formatDate(dateStr) {
                         Logged by
                         <Link
                             :href="`/users/${bookLog.user.id}`"
-                            class="font-medium text-gray-800 hover:underline"
+                            class="font-medium text-gray-800 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:rounded"
                         >
                             {{ bookLog.user.name }}
                         </Link>
@@ -102,7 +108,7 @@ function formatDate(dateStr) {
 
             <!-- Review or notes -->
             <div v-if="bookLog.review || bookLog.notes" class="mb-6 p-4 bg-white border rounded-lg text-sm text-gray-700 leading-relaxed">
-                <p class="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-1">
+                <p class="text-xs font-semibold uppercase tracking-wide text-gray-600 mb-1">
                     {{ bookLog.review ? 'Review' : 'Notes' }}
                 </p>
                 <p class="whitespace-pre-wrap">{{ bookLog.review || bookLog.notes }}</p>
@@ -112,15 +118,17 @@ function formatDate(dateStr) {
             <div class="mb-6">
                 <button
                     @click="toggleLike"
+                    :aria-label="userHasLiked ? 'Unlike this entry' : 'Like this entry'"
+                    :aria-pressed="userHasLiked"
                     :class="[
-                        'inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-medium border transition',
+                        'inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-medium border transition focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2',
                         userHasLiked
                             ? 'bg-red-50 border-red-300 text-red-600 hover:bg-red-100'
                             : 'bg-white border-gray-300 text-gray-600 hover:bg-gray-50',
                     ]"
                 >
-                    <span>{{ userHasLiked ? '♥' : '♡' }}</span>
-                    <span>{{ likesCount }} {{ likesCount === 1 ? 'like' : 'likes' }}</span>
+                    <span aria-hidden="true">{{ userHasLiked ? '♥' : '♡' }}</span>
+                    <span aria-live="polite" aria-atomic="true">{{ likesCount }} {{ likesCount === 1 ? 'like' : 'likes' }}</span>
                 </button>
             </div>
 
@@ -132,17 +140,20 @@ function formatDate(dateStr) {
 
                 <!-- Comment form -->
                 <form @submit.prevent="submitComment" class="mb-6">
+                    <label for="comment-body" class="sr-only">Write a comment</label>
                     <textarea
+                        id="comment-body"
                         v-model="commentForm.body"
                         rows="3"
                         placeholder="Write a comment…"
-                        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                        aria-label="Write a comment"
+                        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 resize-none"
                     />
                     <div class="mt-2 flex justify-end">
                         <button
                             type="submit"
                             :disabled="commentForm.processing || !commentForm.body.trim()"
-                            class="px-4 py-1.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                            class="px-4 py-1.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
                         >
                             Post
                         </button>
@@ -150,7 +161,7 @@ function formatDate(dateStr) {
                 </form>
 
                 <!-- Comment list -->
-                <div v-if="comments.length > 0" class="space-y-4">
+                <div v-if="comments.length > 0" class="space-y-4" aria-live="polite">
                     <div
                         v-for="comment in comments"
                         :key="comment.id"
@@ -160,12 +171,13 @@ function formatDate(dateStr) {
                             <div class="flex items-center justify-between gap-2">
                                 <div class="flex items-center gap-2">
                                     <span class="text-sm font-medium text-gray-800">{{ comment.user.name }}</span>
-                                    <span class="text-xs text-gray-400">{{ formatDate(comment.created_at) }}</span>
+                                    <span class="text-xs text-gray-600">{{ formatDate(comment.created_at) }}</span>
                                 </div>
                                 <button
                                     v-if="comment.user.id === page.props.auth.user.id"
                                     @click="deleteComment(comment.id)"
-                                    class="text-xs text-red-400 hover:text-red-600 transition shrink-0"
+                                    aria-label="Delete comment"
+                                    class="text-xs text-red-400 hover:text-red-600 transition shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 focus-visible:rounded"
                                 >
                                     Delete
                                 </button>

@@ -24,17 +24,18 @@ const props = defineProps({
                     v-for="{ book, frequency } in recommendations"
                     :key="book.id"
                     :href="route('books.show', book.google_books_id)"
-                    class="block border rounded p-3 hover:shadow-md transition"
+                    class="block border rounded p-3 hover:shadow-md transition focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:rounded"
                 >
                     <img
                         v-if="book.cover_image_url"
                         :src="book.cover_image_url"
-                        :alt="book.title"
+                        :alt="book.title + ' cover'"
                         class="w-full h-40 object-contain mb-2"
                     />
                     <div
                         v-else
-                        class="w-full h-40 bg-gray-100 rounded flex items-center justify-center text-gray-300 text-xs mb-2"
+                        class="w-full h-40 bg-gray-100 rounded flex items-center justify-center text-gray-500 text-xs mb-2"
+                        aria-hidden="true"
                     >
                         No cover
                     </div>
@@ -42,7 +43,7 @@ const props = defineProps({
                     <div class="text-sm font-semibold leading-tight">{{ book.title }}</div>
                     <div class="text-xs text-gray-500 mt-0.5">{{ book.author }}</div>
 
-                    <div class="mt-2 inline-block text-xs bg-blue-100 text-blue-700 rounded-full px-2 py-0.5">
+                    <div class="mt-2 inline-block text-xs bg-indigo-100 text-indigo-700 rounded-full px-2 py-0.5">
                         {{ frequency }} reader{{ frequency === 1 ? '' : 's' }} you follow have read this
                     </div>
                 </Link>
