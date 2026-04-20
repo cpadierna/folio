@@ -9,10 +9,10 @@ class LikeController extends Controller
 {
     public function toggle(BookLog $bookLog): RedirectResponse
     {
-        $existing = $bookLog->likes()->where('user_id', auth()->id())->first();
+        $exists = $bookLog->likes()->where('user_id', auth()->id())->exists();
 
-        if ($existing) {
-            $existing->delete();
+        if ($exists) {
+            $bookLog->likes()->where('user_id', auth()->id())->delete();
         } else {
             $bookLog->likes()->create([
                 'user_id' => auth()->id(),

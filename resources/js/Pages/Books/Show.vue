@@ -11,6 +11,7 @@ const form = useForm({
     status: props.log?.status ?? 'want_to_read',
     rating: props.log?.rating ?? null,
     notes: props.log?.notes ?? '',
+    review: props.log?.review ?? '',
 });
 
 function submit() {
@@ -84,20 +85,31 @@ function removeLog() {
                         ></textarea>
                     </div>
 
+                    <div>
+                        <label for="book-review" class="block text-sm font-medium text-gray-700 mb-1">Review (optional)</label>
+                        <textarea
+                            id="book-review"
+                            v-model="form.review"
+                            rows="4"
+                            class="border rounded px-3 py-2 w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+                            placeholder="Share your thoughts on this book..."
+                        ></textarea>
+                    </div>
+
                     <div class="flex gap-3">
                         <button
                             @click="submit"
                             :disabled="form.processing"
-                            class="bg-indigo-600 text-white px-6 py-2 rounded hover:bg-indigo-700 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+                            class="bg-indigo-600 text-white px-6 py-2 rounded hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
                         >
-                            {{ log ? 'Update' : 'Add to Library' }}
+                            {{ form.processing ? 'Saving...' : (log ? 'Update' : 'Add to Library') }}
                         </button>
 
                         <button
                             v-if="log"
                             @click="removeLog"
                             :disabled="form.processing"
-                            class="bg-red-100 text-red-600 px-6 py-2 rounded hover:bg-red-200 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+                            class="bg-red-100 text-red-600 px-6 py-2 rounded hover:bg-red-200 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
                         >
                             Remove
                         </button>

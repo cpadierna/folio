@@ -1,6 +1,7 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link, router } from '@inertiajs/vue3';
+import { ref } from 'vue';
 
 const props = defineProps({
     profileUser: Object,
@@ -13,9 +14,13 @@ const statusLabels = {
     want_to_read: 'Want to Read',
 };
 
+const followLoading = ref(false);
+
 function toggleFollow() {
+    followLoading.value = true;
     router.post(`/users/${props.profileUser.id}/follow`, {}, {
         preserveScroll: true,
+        onFinish: () => { followLoading.value = false; },
     });
 }
 </script>
@@ -39,13 +44,14 @@ function toggleFollow() {
                 <button
                     v-if="profileUser.id !== $page.props.auth.user.id"
                     @click="toggleFollow"
+                    :disabled="followLoading"
                     :aria-label="profileUser.isFollowing ? `Unfollow ${profileUser.name}` : `Follow ${profileUser.name}`"
                     :class="profileUser.isFollowing
                         ? 'border border-gray-300 text-gray-700 hover:bg-gray-50'
                         : 'bg-indigo-600 text-white hover:bg-indigo-700'"
-                    class="px-5 py-2 rounded text-sm font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+                    class="px-5 py-2 rounded text-sm font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                    {{ profileUser.isFollowing ? 'Unfollow' : 'Follow' }}
+                    {{ followLoading ? '...' : (profileUser.isFollowing ? 'Unfollow' : 'Follow') }}
                 </button>
             </div>
 

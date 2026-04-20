@@ -28,6 +28,7 @@ class BookLogController extends Controller
             'status' => 'required|in:want_to_read,reading,read',
             'rating' => 'nullable|numeric|min:1|max:5',
             'notes' => 'nullable|string|max:1000',
+            'review' => 'nullable|string|max:2000',
         ]);
 
         BookLog::updateOrCreate(

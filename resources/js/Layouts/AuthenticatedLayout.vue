@@ -5,6 +5,7 @@ import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
+import Toast from '@/Components/Toast.vue';
 import { Link } from '@inertiajs/vue3';
 
 const showingNavigationDropdown = ref(false);
@@ -52,6 +53,9 @@ const showingNavigationDropdown = ref(false);
                                 </NavLink>
                                 <NavLink :href="route('recommendations')" :active="route().current('recommendations')">
                                     For You
+                                </NavLink>
+                                <NavLink :href="route('users.search')" :active="route().current('users.search')">
+                                    People
                                 </NavLink>
                             </div>
                         </div>
@@ -173,6 +177,9 @@ const showingNavigationDropdown = ref(false);
                         <ResponsiveNavLink :href="route('recommendations')" :active="route().current('recommendations')">
                             For You
                         </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('users.search')" :active="route().current('users.search')">
+                            People
+                        </ResponsiveNavLink>
                     </div>
 
                     <!-- Responsive Settings Options -->
@@ -221,5 +228,6 @@ const showingNavigationDropdown = ref(false);
                 <slot />
             </main>
         </div>
+        <Toast />
     </div>
 </template>

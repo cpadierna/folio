@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\UserSearchController;
 use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\FeedController;
 use App\Http\Controllers\RecommendationController;
@@ -37,6 +38,7 @@ Route::get('/feed', [FeedController::class, 'index'])->middleware('auth')->name(
 
 Route::middleware('auth')->group(function () {
     Route::get('/recommendations', [RecommendationController::class, 'index'])->name('recommendations');
+    Route::get('/users/search', [UserSearchController::class, 'index'])->name('users.search');
     Route::get('/users/{user}', [ProfileController::class, 'show'])->name('users.show');
     Route::post('/users/{user}/follow', [FollowController::class, 'toggle'])->name('users.follow');
     Route::get('/book-logs/{bookLog}', [BookLogController::class, 'show'])->name('book_logs.show');

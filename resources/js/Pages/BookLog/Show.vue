@@ -12,6 +12,9 @@ const props = defineProps({
 
 const page = usePage();
 
+const likeLoading = ref(false);
+const deletingCommentId = ref(null);
+
 const statusLabels = {
     read: 'Read',
     reading: 'Reading',
@@ -25,8 +28,10 @@ const statusClasses = {
 };
 
 function toggleLike() {
+    likeLoading.value = true;
     router.post(route('book_logs.like', props.bookLog.id), {}, {
         preserveScroll: true,
+        onFinish: () => { likeLoading.value = false; },
     });
 }
 
@@ -40,8 +45,10 @@ function submitComment() {
 }
 
 function deleteComment(commentId) {
+    deletingCommentId.value = commentId;
     router.delete(route('comments.destroy', commentId), {
         preserveScroll: true,
+        onFinish: () => { deletingCommentId.value = null; },
     });
 }
 
@@ -106,22 +113,27 @@ function formatDate(dateStr) {
                 </div>
             </div>
 
-            <!-- Review or notes -->
-            <div v-if="bookLog.review || bookLog.notes" class="mb-6 p-4 bg-white border rounded-lg text-sm text-gray-700 leading-relaxed">
-                <p class="text-xs font-semibold uppercase tracking-wide text-gray-600 mb-1">
-                    {{ bookLog.review ? 'Review' : 'Notes' }}
-                </p>
-                <p class="whitespace-pre-wrap">{{ bookLog.review || bookLog.notes }}</p>
+            <!-- Review section -->
+            <div v-if="bookLog.review" class="mb-6 p-4 bg-white border rounded-lg">
+                <p class="text-xs font-semibold uppercase tracking-wide text-gray-600 mb-1">REVIEW</p>
+                <p class="text-gray-800 text-base leading-relaxed whitespace-pre-wrap">{{ bookLog.review }}</p>
+            </div>
+
+            <!-- Notes section -->
+            <div v-if="bookLog.notes" class="mb-6 p-4 bg-white border rounded-lg text-sm text-gray-700 leading-relaxed">
+                <p class="text-xs font-semibold uppercase tracking-wide text-gray-600 mb-1">NOTES</p>
+                <p class="whitespace-pre-wrap">{{ bookLog.notes }}</p>
             </div>
 
             <!-- Like button -->
             <div class="mb-6">
                 <button
                     @click="toggleLike"
+                    :disabled="likeLoading"
                     :aria-label="userHasLiked ? 'Unlike this entry' : 'Like this entry'"
                     :aria-pressed="userHasLiked"
                     :class="[
-                        'inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-medium border transition focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2',
+                        'inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-medium border transition focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed',
                         userHasLiked
                             ? 'bg-red-50 border-red-300 text-red-600 hover:bg-red-100'
                             : 'bg-white border-gray-300 text-gray-600 hover:bg-gray-50',
@@ -155,7 +167,7 @@ function formatDate(dateStr) {
                             :disabled="commentForm.processing || !commentForm.body.trim()"
                             class="px-4 py-1.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
                         >
-                            Post
+                            {{ commentForm.processing ? 'Posting...' : 'Post' }}
                         </button>
                     </div>
                 </form>
@@ -176,8 +188,9 @@ function formatDate(dateStr) {
                                 <button
                                     v-if="comment.user.id === page.props.auth.user.id"
                                     @click="deleteComment(comment.id)"
+                                    :disabled="deletingCommentId === comment.id"
                                     aria-label="Delete comment"
-                                    class="text-xs text-red-400 hover:text-red-600 transition shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 focus-visible:rounded"
+                                    class="text-xs text-red-400 hover:text-red-600 transition shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 focus-visible:rounded disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     Delete
                                 </button>

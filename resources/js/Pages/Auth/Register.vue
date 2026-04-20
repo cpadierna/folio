@@ -105,7 +105,7 @@ const submit = () => {
                     :class="{ 'opacity-25': form.processing }"
                     :disabled="form.processing"
                 >
-                    Register
+                    {{ form.processing ? 'Creating account...' : 'Register' }}
                 </PrimaryButton>
             </div>
         </form>
