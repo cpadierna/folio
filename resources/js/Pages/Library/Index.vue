@@ -26,9 +26,18 @@ const statusOrder = ['reading', 'want_to_read', 'read'];
                 </span>
             </h1>
 
-            <div v-if="Object.keys(logs).length === 0" class="text-gray-500">
-                You haven't logged any books yet.
-                <a href="/books/search" class="text-indigo-600 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:rounded">Search for a book</a> to get started.
+            <div v-if="Object.keys(logs).length === 0" class="text-center py-24">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12 text-gray-300 mx-auto mb-4" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
+                </svg>
+                <h2 class="text-gray-900 font-semibold text-lg mt-2">Your library is empty</h2>
+                <p class="text-gray-500 text-sm mt-1">Start building your reading list by searching for a book.</p>
+                <a
+                    :href="route('books.search')"
+                    class="inline-block mt-6 bg-indigo-600 text-white rounded-full px-6 py-2 text-sm hover:bg-indigo-700 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+                >
+                    Search Books
+                </a>
             </div>
 
             <div v-for="status in statusOrder" :key="status" class="mb-10">
