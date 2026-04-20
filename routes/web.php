@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FeedController;
+use App\Http\Controllers\RecommendationController;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\ProfileController;
@@ -41,6 +42,7 @@ Route::get('/library', [LibraryController::class, 'index'])->name('library');
 Route::get('/feed', [FeedController::class, 'index'])->middleware('auth')->name('feed');
 
 Route::middleware('auth')->group(function () {
+    Route::get('/recommendations', [RecommendationController::class, 'index'])->name('recommendations');
     Route::get('/users/{user}', [ProfileController::class, 'show'])->name('users.show');
     Route::post('/users/{user}/follow', [FollowController::class, 'toggle'])->name('users.follow');
     Route::get('/book-logs/{bookLog}', [BookLogController::class, 'show'])->name('book_logs.show');
