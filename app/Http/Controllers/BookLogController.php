@@ -5,9 +5,23 @@ namespace App\Http\Controllers;
 use App\Models\Book;
 use App\Models\BookLog;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class BookLogController extends Controller
 {
+    public function show(BookLog $bookLog): Response
+    {
+        $bookLog->load(['book', 'user', 'comments.user', 'likes']);
+
+        return Inertia::render('BookLog/Show', [
+            'bookLog'      => $bookLog,
+            'likesCount'   => $bookLog->likes()->count(),
+            'userHasLiked' => $bookLog->likes()->where('user_id', auth()->id())->exists(),
+            'comments'     => $bookLog->comments()->with('user')->latest()->get(),
+        ]);
+    }
+
     public function store(Request $request, Book $book)
     {
         $validated = $request->validate([

@@ -50,9 +50,10 @@ function formatDate(dateStr) {
 
             <!-- Log entries -->
             <div v-else class="space-y-4">
-                <div
+                <Link
                     v-for="log in logs.data"
                     :key="log.id"
+                    :href="route('book_logs.show', log.id)"
                     class="flex gap-4 border rounded-lg p-4 hover:shadow-sm transition"
                 >
                     <!-- Cover -->
@@ -104,7 +105,7 @@ function formatDate(dateStr) {
                             </Link>
                         </div>
                     </div>
-                </div>
+                </Link>
             </div>
 
             <!-- Pagination -->

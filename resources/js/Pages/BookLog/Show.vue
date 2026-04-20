@@ -1,0 +1,183 @@
+<script setup>
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { Head, Link, useForm, usePage, router } from '@inertiajs/vue3';
+import { ref } from 'vue';
+
+const props = defineProps({
+    bookLog: Object,
+    likesCount: Number,
+    userHasLiked: Boolean,
+    comments: Array,
+});
+
+const page = usePage();
+
+const statusLabels = {
+    read: 'Read',
+    reading: 'Reading',
+    want_to_read: 'Want to Read',
+};
+
+const statusClasses = {
+    read: 'bg-green-100 text-green-700',
+    reading: 'bg-blue-100 text-blue-700',
+    want_to_read: 'bg-gray-100 text-gray-600',
+};
+
+function toggleLike() {
+    router.post(route('book_logs.like', props.bookLog.id), {}, {
+        preserveScroll: true,
+    });
+}
+
+const commentForm = useForm({ body: '' });
+
+function submitComment() {
+    commentForm.post(route('book_logs.comments.store', props.bookLog.id), {
+        preserveScroll: true,
+        onSuccess: () => commentForm.reset(),
+    });
+}
+
+function deleteComment(commentId) {
+    router.delete(route('comments.destroy', commentId), {
+        preserveScroll: true,
+    });
+}
+
+function formatDate(dateStr) {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+}
+</script>
+
+<template>
+    <Head :title="bookLog.book.title" />
+
+    <AuthenticatedLayout>
+        <div class="max-w-2xl mx-auto py-8 px-4">
+
+            <!-- Book header -->
+            <div class="flex gap-5 mb-6">
+                <img
+                    v-if="bookLog.book.cover_image_url"
+                    :src="bookLog.book.cover_image_url"
+                    :alt="bookLog.book.title"
+                    class="w-20 h-28 object-contain rounded shadow-sm shrink-0"
+                />
+                <div
+                    v-else
+                    class="w-20 h-28 bg-gray-100 rounded flex items-center justify-center text-gray-300 text-xs shrink-0"
+                >
+                    No cover
+                </div>
+
+                <div class="flex-1 min-w-0">
+                    <h1 class="text-xl font-bold leading-tight">{{ bookLog.book.title }}</h1>
+                    <p class="text-sm text-gray-500 mt-0.5">{{ bookLog.book.author }}</p>
+
+                    <div class="flex items-center gap-2 mt-3 flex-wrap">
+                        <span
+                            :class="statusClasses[bookLog.status]"
+                            class="text-xs font-medium px-2 py-0.5 rounded-full"
+                        >
+                            {{ statusLabels[bookLog.status] }}
+                        </span>
+                        <span v-if="bookLog.rating" class="text-xs text-yellow-500 font-medium">
+                            {{ bookLog.rating }} ★
+                        </span>
+                    </div>
+
+                    <div class="mt-2 text-sm text-gray-600">
+                        Logged by
+                        <Link
+                            :href="`/users/${bookLog.user.id}`"
+                            class="font-medium text-gray-800 hover:underline"
+                        >
+                            {{ bookLog.user.name }}
+                        </Link>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Review or notes -->
+            <div v-if="bookLog.review || bookLog.notes" class="mb-6 p-4 bg-white border rounded-lg text-sm text-gray-700 leading-relaxed">
+                <p class="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-1">
+                    {{ bookLog.review ? 'Review' : 'Notes' }}
+                </p>
+                <p class="whitespace-pre-wrap">{{ bookLog.review || bookLog.notes }}</p>
+            </div>
+
+            <!-- Like button -->
+            <div class="mb-6">
+                <button
+                    @click="toggleLike"
+                    :class="[
+                        'inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-medium border transition',
+                        userHasLiked
+                            ? 'bg-red-50 border-red-300 text-red-600 hover:bg-red-100'
+                            : 'bg-white border-gray-300 text-gray-600 hover:bg-gray-50',
+                    ]"
+                >
+                    <span>{{ userHasLiked ? '♥' : '♡' }}</span>
+                    <span>{{ likesCount }} {{ likesCount === 1 ? 'like' : 'likes' }}</span>
+                </button>
+            </div>
+
+            <!-- Comments section -->
+            <div class="border-t pt-6">
+                <h2 class="text-sm font-semibold text-gray-700 mb-4">
+                    Comments <span class="text-gray-400 font-normal">({{ comments.length }})</span>
+                </h2>
+
+                <!-- Comment form -->
+                <form @submit.prevent="submitComment" class="mb-6">
+                    <textarea
+                        v-model="commentForm.body"
+                        rows="3"
+                        placeholder="Write a comment…"
+                        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                    />
+                    <div class="mt-2 flex justify-end">
+                        <button
+                            type="submit"
+                            :disabled="commentForm.processing || !commentForm.body.trim()"
+                            class="px-4 py-1.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                        >
+                            Post
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Comment list -->
+                <div v-if="comments.length > 0" class="space-y-4">
+                    <div
+                        v-for="comment in comments"
+                        :key="comment.id"
+                        class="flex gap-3"
+                    >
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center justify-between gap-2">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-sm font-medium text-gray-800">{{ comment.user.name }}</span>
+                                    <span class="text-xs text-gray-400">{{ formatDate(comment.created_at) }}</span>
+                                </div>
+                                <button
+                                    v-if="comment.user.id === page.props.auth.user.id"
+                                    @click="deleteComment(comment.id)"
+                                    class="text-xs text-red-400 hover:text-red-600 transition shrink-0"
+                                >
+                                    Delete
+                                </button>
+                            </div>
+                            <p class="text-sm text-gray-700 mt-0.5 whitespace-pre-wrap">{{ comment.body }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <p v-else class="text-sm text-gray-400">No comments yet. Be the first!</p>
+            </div>
+
+        </div>
+    </AuthenticatedLayout>
+</template>

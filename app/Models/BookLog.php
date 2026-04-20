@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class BookLog extends Model
 {
@@ -12,6 +13,7 @@ class BookLog extends Model
         'status',
         'rating',
         'notes',
+        'review',
     ];
 
     public function user()
@@ -22,5 +24,15 @@ class BookLog extends Model
     public function book()
     {
         return $this->belongsTo(Book::class);
+    }
+
+    public function likes(): HasMany
+    {
+        return $this->hasMany(Like::class);
+    }
+
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class)->with('user');
     }
 }

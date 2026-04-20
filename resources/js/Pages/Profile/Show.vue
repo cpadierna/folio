@@ -1,6 +1,6 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, router } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3';
 
 const props = defineProps({
     profileUser: Object,
@@ -57,10 +57,10 @@ function toggleFollow() {
                 </div>
 
                 <div v-else class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <a
+                    <Link
                         v-for="log in bookLogs"
                         :key="log.id"
-                        :href="`/books/${log.book.google_books_id}`"
+                        :href="route('book_logs.show', log.id)"
                         class="block border rounded p-3 hover:shadow-md transition"
                     >
                         <img
@@ -75,7 +75,7 @@ function toggleFollow() {
                             <span class="text-xs text-gray-400">{{ statusLabels[log.status] }}</span>
                             <span v-if="log.rating" class="text-xs text-yellow-500">{{ log.rating }} ★</span>
                         </div>
-                    </a>
+                    </Link>
                 </div>
             </div>
 
