@@ -8,10 +8,16 @@ const props = defineProps({
     bookLogs: Array,
 });
 
-const statusLabels = {
+const statusLabel = {
     read: 'Read',
-    reading: 'Currently Reading',
+    reading: 'Reading',
     want_to_read: 'Want to Read',
+};
+
+const statusClass = {
+    read: 'bg-green-100 text-green-700',
+    reading: 'bg-blue-100 text-blue-700',
+    want_to_read: 'bg-gray-100 text-gray-700',
 };
 
 const followLoading = ref(false);
@@ -33,11 +39,26 @@ function toggleFollow() {
 
             <!-- Profile header -->
             <div class="flex items-start justify-between mb-8">
-                <div>
-                    <h1 class="text-2xl font-bold">{{ profileUser.name }}</h1>
-                    <div class="flex gap-6 mt-2 text-sm text-gray-600">
-                        <span><strong class="text-gray-900">{{ profileUser.followersCount }}</strong> followers</span>
-                        <span><strong class="text-gray-900">{{ profileUser.followingCount }}</strong> following</span>
+                <div class="flex items-center gap-4">
+                    <img
+                        v-if="profileUser.avatar_url"
+                        :src="profileUser.avatar_url"
+                        :alt="profileUser.name + ' avatar'"
+                        class="w-16 h-16 rounded-full object-cover shrink-0"
+                    />
+                    <div
+                        v-else
+                        class="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center font-semibold text-gray-600 text-2xl shrink-0"
+                        aria-hidden="true"
+                    >
+                        {{ profileUser.name.charAt(0).toUpperCase() }}
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold">{{ profileUser.name }}</h1>
+                        <div class="flex gap-6 mt-2 text-sm text-gray-600">
+                            <span><strong class="text-gray-900">{{ profileUser.followersCount }}</strong> followers</span>
+                            <span><strong class="text-gray-900">{{ profileUser.followingCount }}</strong> following</span>
+                        </div>
                     </div>
                 </div>
 
@@ -91,7 +112,7 @@ function toggleFollow() {
                         <div class="text-sm font-semibold leading-tight">{{ log.book.title }}</div>
                         <div class="text-xs text-gray-500 mt-0.5">{{ log.book.author }}</div>
                         <div class="flex items-center justify-between mt-1.5">
-                            <span class="text-xs text-gray-600" role="status">{{ statusLabels[log.status] }}</span>
+                            <span :class="statusClass[log.status]" class="text-xs font-medium px-2 py-0.5 rounded-full" role="status">{{ statusLabel[log.status] }}</span>
                             <span
                                 v-if="log.rating"
                                 class="text-xs text-yellow-500"

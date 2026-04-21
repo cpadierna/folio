@@ -6,27 +6,26 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Like extends Model
+class Follow extends Model
 {
     use HasFactory;
-
 
     public $incrementing = false;
     public $primaryKey = null;
     public $timestamps = false;
 
     protected $fillable = [
-        'user_id',
-        'book_log_id',
+        'follower_id',
+        'following_id',
     ];
 
-    public function user(): BelongsTo
+    public function follower(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'follower_id');
     }
 
-    public function bookLog(): BelongsTo
+    public function following(): BelongsTo
     {
-        return $this->belongsTo(BookLog::class);
+        return $this->belongsTo(User::class, 'following_id');
     }
 }

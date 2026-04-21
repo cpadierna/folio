@@ -15,16 +15,16 @@ const page = usePage();
 const likeLoading = ref(false);
 const deletingCommentId = ref(null);
 
-const statusLabels = {
+const statusLabel = {
     read: 'Read',
     reading: 'Reading',
     want_to_read: 'Want to Read',
 };
 
-const statusClasses = {
+const statusClass = {
     read: 'bg-green-100 text-green-700',
     reading: 'bg-blue-100 text-blue-700',
-    want_to_read: 'bg-gray-100 text-gray-600',
+    want_to_read: 'bg-gray-100 text-gray-700',
 };
 
 function toggleLike() {
@@ -86,11 +86,11 @@ function formatDate(dateStr) {
 
                     <div class="flex items-center gap-2 mt-3 flex-wrap">
                         <span
-                            :class="statusClasses[bookLog.status]"
+                            :class="statusClass[bookLog.status]"
                             class="text-xs font-medium px-2 py-0.5 rounded-full"
                             role="status"
                         >
-                            {{ statusLabels[bookLog.status] }}
+                            {{ statusLabel[bookLog.status] }}
                         </span>
                         <span
                             v-if="bookLog.rating"

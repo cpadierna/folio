@@ -6,10 +6,16 @@ const props = defineProps({
     logs: Object,
 });
 
-const statusLabels = {
+const statusLabel = {
     read: 'Read',
-    reading: 'Currently Reading',
+    reading: 'Reading',
     want_to_read: 'Want to Read',
+};
+
+const statusClass = {
+    read: 'bg-green-100 text-green-700',
+    reading: 'bg-blue-100 text-blue-700',
+    want_to_read: 'bg-gray-100 text-gray-700',
 };
 
 const statusOrder = ['reading', 'want_to_read', 'read'];
@@ -42,7 +48,7 @@ const statusOrder = ['reading', 'want_to_read', 'read'];
 
             <div v-for="status in statusOrder" :key="status" class="mb-10">
                 <template v-if="logs[status]?.length">
-                    <h2 class="text-lg font-semibold mb-4 border-b pb-2">{{ statusLabels[status] }}</h2>
+                    <h2 class="text-lg font-semibold mb-4 border-b pb-2">{{ statusLabel[status] }}</h2>
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                         <article v-for="log in logs[status]" :key="log.id">
                         <a

@@ -68,12 +68,24 @@ const showingNavigationDropdown = ref(false);
                                         <span class="inline-flex rounded-md">
                                             <button
                                                 type="button"
-                                                class="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+                                                class="inline-flex items-center gap-2 rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
                                             >
+                                                <img
+                                                    v-if="$page.props.auth.user.avatar_url"
+                                                    :src="$page.props.auth.user.avatar_url"
+                                                    :alt="$page.props.auth.user.name + ' avatar'"
+                                                    class="w-7 h-7 rounded-full object-cover"
+                                                />
+                                                <span
+                                                    v-else
+                                                    class="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-xs font-semibold text-gray-600"
+                                                    aria-hidden="true"
+                                                >{{ $page.props.auth.user.name.charAt(0).toUpperCase() }}</span>
+
                                                 {{ $page.props.auth.user.name }}
 
                                                 <svg
-                                                    class="-me-0.5 ms-2 h-4 w-4"
+                                                    class="-me-0.5 h-4 w-4"
                                                     xmlns="http://www.w3.org/2000/svg"
                                                     viewBox="0 0 20 20"
                                                     fill="currentColor"
@@ -92,7 +104,7 @@ const showingNavigationDropdown = ref(false);
                                         <DropdownLink
                                             :href="route('profile.edit')"
                                         >
-                                            Profile
+                                            Account Settings
                                         </DropdownLink>
                                         <DropdownLink :href="route('users.show', { user: $page.props.auth.user.id })">
                                             My Profile
@@ -199,7 +211,10 @@ const showingNavigationDropdown = ref(false);
 
                         <div class="mt-3 space-y-1">
                             <ResponsiveNavLink :href="route('profile.edit')">
-                                Profile
+                                Account Settings
+                            </ResponsiveNavLink>
+                            <ResponsiveNavLink :href="route('users.show', { user: $page.props.auth.user.id })">
+                                My Profile
                             </ResponsiveNavLink>
                             <ResponsiveNavLink
                                 :href="route('logout')"

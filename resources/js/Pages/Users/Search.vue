@@ -1,23 +1,23 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link, router } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
 const props = defineProps({
     users: Array,
     query: String,
 });
 
-const search = ref(props.query ?? '');
+const search = ref(props.query);
 const followingLoading = ref({});
-let debounceTimer = null;
 
-function onInput() {
+let debounceTimer = null;
+watch(search, () => {
     clearTimeout(debounceTimer);
     debounceTimer = setTimeout(() => {
         router.get(route('users.search'), { q: search.value }, { preserveState: true, replace: true });
     }, 300);
-}
+});
 
 function toggleFollow(userId) {
     followingLoading.value[userId] = true;
@@ -41,21 +41,20 @@ function toggleFollow(userId) {
                 <input
                     id="user-search"
                     v-model="search"
-                    @input="onInput"
                     type="search"
-                    placeholder="Search by name…"
-                    class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+                    placeholder="Search by name..."
+                    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus-visible:ring-2 focus-visible:ring-indigo-500"
                 />
             </div>
 
             <!-- Empty query state -->
-            <div v-if="!query" class="text-center text-gray-400 text-sm mt-16">
+            <div v-if="!query && users.length === 0" class="text-center text-gray-500 mt-16">
                 Search for readers by name
             </div>
 
             <!-- No results state -->
-            <div v-else-if="users.length === 0" class="text-center text-gray-400 text-sm mt-16">
-                No readers found for "<span class="text-gray-600">{{ query }}</span>"
+            <div v-else-if="query && users.length === 0" class="text-center text-gray-500 mt-16">
+                No readers found for '{{ query }}'
             </div>
 
             <!-- Results list -->
@@ -66,10 +65,13 @@ function toggleFollow(userId) {
                     class="flex items-center gap-4 p-4 bg-white border border-gray-200 rounded-lg"
                 >
                     <!-- Avatar -->
-                    <div
-                        class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 font-semibold text-sm shrink-0 select-none"
-                        aria-hidden="true"
-                    >
+                    <img
+                        v-if="user.avatar_url"
+                        :src="user.avatar_url"
+                        :alt="user.name + ' avatar'"
+                        class="w-10 h-10 rounded-full object-cover shrink-0"
+                    />
+                    <div v-else class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center font-semibold text-gray-600 shrink-0">
                         {{ user.name.charAt(0).toUpperCase() }}
                     </div>
 
@@ -77,12 +79,12 @@ function toggleFollow(userId) {
                     <div class="flex-1 min-w-0">
                         <Link
                             :href="route('users.show', user.id)"
-                            class="text-sm font-medium text-gray-900 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:rounded"
+                            class="font-medium text-gray-900 hover:text-indigo-600"
                         >
                             {{ user.name }}
                         </Link>
-                        <p class="text-xs text-gray-400 mt-0.5">
-                            {{ user.followers_count }} {{ user.followers_count === 1 ? 'follower' : 'followers' }}
+                        <p class="text-sm text-gray-500">
+                            {{ user.followers_count }} followers
                         </p>
                     </div>
 
@@ -90,12 +92,11 @@ function toggleFollow(userId) {
                     <button
                         @click="toggleFollow(user.id)"
                         :disabled="!!followingLoading[user.id]"
-                        :aria-label="user.isFollowing ? `Unfollow ${user.name}` : `Follow ${user.name}`"
                         :class="[
-                            'shrink-0 text-sm font-medium px-4 py-1.5 rounded-full border transition focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed',
+                            'shrink-0 text-sm font-medium px-4 py-1.5 rounded-lg transition disabled:opacity-50',
                             user.isFollowing
-                                ? 'bg-white border-gray-300 text-gray-600 hover:bg-gray-50 hover:border-red-300 hover:text-red-600'
-                                : 'bg-indigo-600 border-indigo-600 text-white hover:bg-indigo-700',
+                                ? 'bg-gray-100 text-gray-700'
+                                : 'bg-indigo-600 text-white',
                         ]"
                     >
                         {{ followingLoading[user.id] ? '...' : (user.isFollowing ? 'Unfollow' : 'Follow') }}
