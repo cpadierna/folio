@@ -67,16 +67,16 @@ class BookFactory extends Factory
             ['Circe', 'Madeline Miller'],
         ];
 
-        [$title, $author] = fake()->randomElement($books);
-        $googleBooksId = fake()->unique()->bothify('??########');
+        [$title, $author] = $this->faker->randomElement($books);
+        $googleBooksId = $this->faker->unique()->bothify('??########');
 
         return [
             'google_books_id' => $googleBooksId,
             'title'           => $title,
             'author'          => $author,
             'cover_image_url' => "https://picsum.photos/seed/{$googleBooksId}/128/192",
-            'description'     => fake()->paragraphs(3, true),
-            'published_date'  => fake()->year(),
+            'description'     => $this->faker->paragraphs(3, true),
+            'published_date'  => $this->faker->year(),
         ];
     }
 }

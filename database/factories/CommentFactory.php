@@ -19,7 +19,7 @@ class CommentFactory extends Factory
         return [
             'user_id'     => User::factory(),
             'book_log_id' => BookLog::factory(),
-            'body'        => fake()->sentences(fake()->numberBetween(1, 3), true),
+            'body'        => $this->faker->sentences($this->faker->numberBetween(1, 3), true),
         ];
     }
 }
