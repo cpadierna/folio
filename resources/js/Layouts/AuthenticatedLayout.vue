@@ -83,7 +83,7 @@ watch(mobileMenuOpen, (val) => {
 
                             <!-- Navigation Links -->
                             <div
-                                class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex"
+                                class="hidden space-x-8 xl:-my-px xl:ms-10 xl:flex"
                             >
                                 <NavLink
                                     :href="route('dashboard')"
@@ -109,7 +109,7 @@ watch(mobileMenuOpen, (val) => {
                             </div>
                         </div>
 
-                        <div class="hidden sm:ms-6 sm:flex sm:items-center">
+                        <div class="hidden xl:ms-6 xl:flex xl:items-center">
                             <!-- Settings Dropdown -->
                             <div class="relative ms-3">
                                 <Dropdown align="right" width="48">
@@ -171,7 +171,7 @@ watch(mobileMenuOpen, (val) => {
                         </div>
 
                         <!-- Hamburger (mobile only) -->
-                        <div class="-me-2 flex items-center sm:hidden">
+                        <div class="-me-2 flex items-center xl:hidden">
                             <button
                                 @click="mobileMenuOpen = !mobileMenuOpen"
                                 :aria-label="mobileMenuOpen ? 'Close menu' : 'Open menu'"
