@@ -99,7 +99,7 @@ const shelfBooks = computed(() => {
             <div class="mt-10 flex items-center justify-center gap-4 flex-wrap">
               <Link v-if="canRegister" :href="route('register')"
                 class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-8 py-3.5 rounded-full text-base transition-colors shadow-lg shadow-indigo-200">
-                Get started free
+                Get started for free
               </Link>
               <Link v-if="canLogin" :href="route('login')"
                 class="text-indigo-600 hover:text-indigo-800 font-medium text-base underline underline-offset-2 transition-colors">
@@ -146,7 +146,7 @@ const shelfBooks = computed(() => {
         <section id="features" class="bg-white py-24">
             <div class="mx-auto max-w-6xl px-6">
                 <h2 class="mb-14 text-center text-3xl font-bold text-gray-900">
-                    Everything you need to read better
+                    One place for your entire reading life
                 </h2>
                 <div class="grid gap-6 sm:grid-cols-3">
                     <!-- Track -->
