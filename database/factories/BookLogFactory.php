@@ -19,10 +19,10 @@ class BookLogFactory extends Factory
         return [
             'user_id'  => User::factory(),
             'book_id'  => Book::factory(),
-            'status'   => $this->faker->randomElement(['want_to_read', 'reading', 'read']),
-            'rating'   => $this->faker->randomElement([null, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0]),
-            'notes'    => $this->faker->optional(0.6)->sentences(2, true),
-            'review'   => $this->faker->optional(0.4)->paragraph(),
+            'status'   => fake()->randomElement(['want_to_read', 'reading', 'read']),
+            'rating'   => fake()->randomElement([null, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0]),
+            'notes'    => fake()->optional(0.6)->sentences(2, true),
+            'review'   => fake()->optional(0.4)->paragraph(),
         ];
     }
 }
