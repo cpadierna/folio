@@ -2,6 +2,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link, useForm, usePage, router } from '@inertiajs/vue3';
 import { ref } from 'vue';
+import { useStatusBadge } from '@/composables/useStatusBadge';
 
 const props = defineProps({
     bookLog: Object,
@@ -15,17 +16,7 @@ const page = usePage();
 const likeLoading = ref(false);
 const deletingCommentId = ref(null);
 
-const statusLabel = {
-    read: 'Read',
-    reading: 'Reading',
-    want_to_read: 'Want to Read',
-};
-
-const statusClass = {
-    read: 'bg-green-100 text-green-700',
-    reading: 'bg-blue-100 text-blue-700',
-    want_to_read: 'bg-gray-100 text-gray-700',
-};
+const { statusLabel, statusClass } = useStatusBadge();
 
 function toggleLike() {
     likeLoading.value = true;
@@ -85,11 +76,7 @@ function formatDate(dateStr) {
                     <p class="text-sm text-gray-500 mt-0.5">{{ bookLog.book.author }}</p>
 
                     <div class="flex items-center gap-2 mt-3 flex-wrap">
-                        <span
-                            :class="statusClass[bookLog.status]"
-                            class="text-xs font-medium px-2 py-0.5 rounded-full"
-                            role="status"
-                        >
+                        <span :class="statusClass[bookLog.status]" role="status">
                             {{ statusLabel[bookLog.status] }}
                         </span>
                         <span

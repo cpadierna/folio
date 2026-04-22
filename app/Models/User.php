@@ -12,7 +12,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Models\BookLog;
 
-#[Fillable(['name', 'email', 'password', 'avatar'])]
+#[Fillable(['name', 'email', 'password', 'avatar', 'bio', 'location', 'favorite_genre', 'website', 'reading_goal'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {

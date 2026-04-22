@@ -1,22 +1,13 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
+import { useStatusBadge } from '@/composables/useStatusBadge';
 
 const props = defineProps({
     logs: Object,
 });
 
-const statusLabel = {
-    read: 'Read',
-    reading: 'Reading',
-    want_to_read: 'Want to Read',
-};
-
-const statusClass = {
-    read: 'bg-green-100 text-green-700',
-    reading: 'bg-blue-100 text-blue-700',
-    want_to_read: 'bg-gray-100 text-gray-700',
-};
+const { statusLabel, statusClass } = useStatusBadge();
 
 function formatDate(dateStr) {
     const date = new Date(dateStr);
@@ -101,11 +92,7 @@ function formatDate(dateStr) {
                         </div>
 
                         <div class="flex items-center gap-2 mt-2 flex-wrap">
-                            <span
-                                :class="statusClass[log.status]"
-                                class="text-xs font-medium px-2 py-0.5 rounded-full"
-                                role="status"
-                            >
+                            <span :class="statusClass[log.status]" role="status">
                                 {{ statusLabel[log.status] }}
                             </span>
                             <span

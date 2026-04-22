@@ -1,22 +1,13 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
+import { useStatusBadge } from '@/composables/useStatusBadge';
 
 const props = defineProps({
     logs: Object,
 });
 
-const statusLabel = {
-    read: 'Read',
-    reading: 'Reading',
-    want_to_read: 'Want to Read',
-};
-
-const statusClass = {
-    read: 'bg-green-100 text-green-700',
-    reading: 'bg-blue-100 text-blue-700',
-    want_to_read: 'bg-gray-100 text-gray-700',
-};
+const { statusLabel, statusClass } = useStatusBadge();
 
 const statusOrder = ['reading', 'want_to_read', 'read'];
 </script>

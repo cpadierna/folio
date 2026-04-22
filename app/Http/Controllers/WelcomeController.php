@@ -13,7 +13,7 @@ class WelcomeController extends Controller
     {
         $recentLogs = BookLog::with('book')
             ->latest()
-            ->take(8)
+            ->take(16)
             ->get();
 
         return Inertia::render('Welcome', [

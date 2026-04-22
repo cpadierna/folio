@@ -31,15 +31,15 @@ const props = defineProps({
 
             <div v-else class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <Link
-                    v-for="{ book, frequency } in recommendations"
-                    :key="book.id"
-                    :href="route('books.show', book.google_books_id)"
+                    v-for="rec in recommendations"
+                    :key="rec.book.id"
+                    :href="route('books.show', rec.book.google_books_id)"
                     class="block border rounded p-3 hover:shadow-md transition focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:rounded"
                 >
                     <img
-                        v-if="book.cover_image_url"
-                        :src="book.cover_image_url"
-                        :alt="book.title + ' cover'"
+                        v-if="rec.book.cover_image_url"
+                        :src="rec.book.cover_image_url"
+                        :alt="rec.book.title + ' cover'"
                         class="w-full h-40 object-contain mb-2"
                     />
                     <div
@@ -50,12 +50,15 @@ const props = defineProps({
                         No cover
                     </div>
 
-                    <div class="text-sm font-semibold leading-tight">{{ book.title }}</div>
-                    <div class="text-xs text-gray-500 mt-0.5">{{ book.author }}</div>
+                    <div class="text-sm font-semibold leading-tight">{{ rec.book.title }}</div>
+                    <div class="text-xs text-gray-500 mt-0.5">{{ rec.book.author }}</div>
 
-                    <div class="mt-2 inline-block text-xs bg-indigo-100 text-indigo-700 rounded-full px-2 py-0.5">
-                        {{ frequency }} reader{{ frequency === 1 ? '' : 's' }} you follow have read this
-                    </div>
+                    <span class="inline-flex items-center gap-2 text-xs font-medium text-indigo-600 mt-2">
+                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
+                        </svg>
+                        {{ rec.frequency }} {{ rec.frequency === 1 ? 'reader' : 'readers' }} you follow logged this
+                    </span>
                 </Link>
             </div>
         </div>

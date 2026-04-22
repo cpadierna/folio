@@ -25,6 +25,11 @@ class ProfileController extends Controller
                 'followersCount' => $user->followers()->count(),
                 'followingCount' => $user->following()->count(),
                 'isFollowing' => auth()->user()->following()->where('following_id', $user->id)->exists(),
+                'bio' => $user->bio,
+                'location' => $user->location,
+                'favorite_genre' => $user->favorite_genre,
+                'website' => $user->website,
+                'reading_goal' => $user->reading_goal,
             ],
             'bookLogs' => $user->bookLogs()->with('book')->latest()->take(6)->get(),
         ]);
@@ -47,7 +52,7 @@ class ProfileController extends Controller
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
         $user = $request->user();
-        $user->fill($request->safe()->only(['name', 'email']));
+        $user->fill($request->safe()->only(['name', 'email', 'bio', 'location', 'favorite_genre', 'website', 'reading_goal']));
 
         if ($request->hasFile('avatar')) {
             if ($user->avatar) {

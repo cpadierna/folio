@@ -1,8 +1,9 @@
 <script setup>
+import { computed } from 'vue';
 import { Head, Link } from '@inertiajs/vue3';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 
-defineProps({
+const props = defineProps({
     canLogin: {
         type: Boolean,
     },
@@ -13,6 +14,40 @@ defineProps({
         type: Array,
         default: () => [],
     },
+});
+
+const SHELF_MIN = 16;
+
+const gradients = [
+    'from-indigo-500 to-indigo-700',
+    'from-violet-500 to-violet-700',
+    'from-emerald-500 to-emerald-700',
+    'from-rose-500 to-rose-700',
+    'from-amber-500 to-amber-700',
+    'from-sky-500 to-sky-700',
+    'from-teal-500 to-teal-700',
+    'from-orange-500 to-orange-700',
+];
+
+function titleGradient(title = '') {
+    let h = 0;
+    for (let i = 0; i < title.length; i++) {
+        h = Math.imul(31, h) + title.charCodeAt(i) | 0;
+    }
+    return gradients[Math.abs(h) % gradients.length];
+}
+
+function hasValidCover(url) {
+    return typeof url === 'string' && url.startsWith('http');
+}
+
+const shelfBooks = computed(() => {
+    if (!props.recentLogs.length) return [];
+    const result = [...props.recentLogs];
+    while (result.length < SHELF_MIN) {
+        result.push(...props.recentLogs);
+    }
+    return result.slice(0, Math.max(SHELF_MIN, props.recentLogs.length));
 });
 </script>
 
@@ -81,24 +116,28 @@ defineProps({
             <p class="mb-6 text-center text-xs font-semibold uppercase tracking-widest text-gray-400">
                 Recently logged by readers
             </p>
-            <div class="flex gap-4 overflow-x-auto px-8 pb-4">
+            <div class="shelf-scroll flex gap-4 overflow-x-scroll snap-x snap-mandatory px-8 pb-6 pt-2">
                 <div
-                    v-for="log in recentLogs"
-                    :key="log.id"
-                    class="group flex-shrink-0"
+                    v-for="(log, index) in shelfBooks"
+                    :key="index"
+                    class="group flex-shrink-0 snap-start"
                 >
                     <img
-                        v-if="log.book?.cover_image_url"
+                        v-if="hasValidCover(log.book?.cover_image_url)"
                         :src="log.book.cover_image_url"
-                        :alt="log.book.title + ' cover'"
+                        :alt="(log.book?.title ?? 'Book') + ' cover'"
                         class="h-48 w-auto cursor-pointer rounded-lg object-cover shadow-md transition-transform duration-200 group-hover:scale-105"
                     />
                     <div
                         v-else
-                        class="flex h-48 w-32 cursor-pointer flex-col items-center justify-center rounded-lg bg-gray-200 p-3 text-center shadow-md transition-transform duration-200 group-hover:scale-105"
+                        class="flex h-48 w-32 cursor-pointer flex-col items-center justify-center rounded-lg bg-gradient-to-b p-3 text-center shadow-md transition-transform duration-200 group-hover:scale-105"
+                        :class="titleGradient(log.book?.title)"
                     >
-                        <span class="text-xs font-medium leading-snug text-gray-500">
+                        <span class="line-clamp-3 text-xs font-medium leading-snug text-white">
                             {{ log.book?.title ?? 'Unknown' }}
+                        </span>
+                        <span class="mt-1 text-xs text-white/70">
+                            {{ log.book?.author ?? '' }}
                         </span>
                     </div>
                 </div>
@@ -173,3 +212,13 @@ defineProps({
 
     </div>
 </template>
+
+<style>
+.shelf-scroll::-webkit-scrollbar {
+    display: none;
+}
+.shelf-scroll {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+</style>

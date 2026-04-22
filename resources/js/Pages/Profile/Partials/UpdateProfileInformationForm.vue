@@ -24,6 +24,11 @@ const form = useForm({
     name: user.name,
     email: user.email,
     avatar: null,
+    bio: user.bio ?? '',
+    location: user.location ?? '',
+    favorite_genre: user.favorite_genre ?? '',
+    website: user.website ?? '',
+    reading_goal: user.reading_goal ?? '',
 });
 
 function onAvatarChange(event) {
@@ -109,6 +114,82 @@ function onAvatarChange(event) {
                 />
 
                 <InputError class="mt-2" :message="form.errors.email" />
+            </div>
+
+            <!-- Bio -->
+            <div>
+                <InputLabel for="bio" value="About Me" />
+                <textarea
+                    id="bio"
+                    v-model="form.bio"
+                    rows="3"
+                    maxlength="500"
+                    placeholder="Tell readers about yourself..."
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm"
+                ></textarea>
+                <div class="mt-1 flex justify-between">
+                    <InputError :message="form.errors.bio" />
+                    <span class="text-xs text-gray-400 ml-auto">{{ (form.bio ?? '').length }}/500</span>
+                </div>
+            </div>
+
+            <!-- Location -->
+            <div>
+                <InputLabel for="location" value="Location" />
+                <TextInput
+                    id="location"
+                    type="text"
+                    class="mt-1 block w-full"
+                    v-model="form.location"
+                    placeholder="Columbus, OH"
+                    autocomplete="address-level2"
+                />
+                <InputError class="mt-2" :message="form.errors.location" />
+            </div>
+
+            <!-- Favorite Genre -->
+            <div>
+                <InputLabel for="favorite_genre" value="Favorite Genre" />
+                <TextInput
+                    id="favorite_genre"
+                    type="text"
+                    class="mt-1 block w-full"
+                    v-model="form.favorite_genre"
+                    placeholder="e.g. Literary Fiction, Sci-Fi..."
+                />
+                <InputError class="mt-2" :message="form.errors.favorite_genre" />
+            </div>
+
+            <!-- Website -->
+            <div>
+                <InputLabel for="website" value="Website" />
+                <TextInput
+                    id="website"
+                    type="url"
+                    class="mt-1 block w-full"
+                    v-model="form.website"
+                    placeholder="https://..."
+                    autocomplete="url"
+                />
+                <InputError class="mt-2" :message="form.errors.website" />
+            </div>
+
+            <!-- Reading Goal -->
+            <div>
+                <InputLabel for="reading_goal" value="Reading Goal" />
+                <div class="mt-1 flex items-center gap-3">
+                    <TextInput
+                        id="reading_goal"
+                        type="number"
+                        class="block w-24"
+                        v-model="form.reading_goal"
+                        placeholder="12"
+                        min="1"
+                        max="365"
+                    />
+                    <span class="text-sm text-gray-500">books this year</span>
+                </div>
+                <InputError class="mt-2" :message="form.errors.reading_goal" />
             </div>
 
             <div v-if="mustVerifyEmail && user.email_verified_at === null">

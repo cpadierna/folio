@@ -1,14 +1,63 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, watch, onMounted, onUnmounted, nextTick } from 'vue';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
-import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import Toast from '@/Components/Toast.vue';
 import { Link } from '@inertiajs/vue3';
 
-const showingNavigationDropdown = ref(false);
+const mobileMenuOpen = ref(false);
+const overlayRef = ref(null);
+
+function closeMenu() {
+    mobileMenuOpen.value = false;
+}
+
+function handleKeydown(e) {
+    if (!mobileMenuOpen.value) return;
+    if (e.key === 'Escape') {
+        closeMenu();
+        return;
+    }
+    if (e.key === 'Tab') {
+        const focusable = overlayRef.value?.querySelectorAll(
+            'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        );
+        if (!focusable?.length) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey) {
+            if (document.activeElement === first) {
+                e.preventDefault();
+                last.focus();
+            }
+        } else {
+            if (document.activeElement === last) {
+                e.preventDefault();
+                first.focus();
+            }
+        }
+    }
+}
+
+onMounted(() => {
+    document.addEventListener('keydown', handleKeydown);
+});
+
+onUnmounted(() => {
+    document.removeEventListener('keydown', handleKeydown);
+    document.body.style.overflow = '';
+});
+
+watch(mobileMenuOpen, (val) => {
+    document.body.style.overflow = val ? 'hidden' : '';
+    if (val) {
+        nextTick(() => {
+            overlayRef.value?.querySelector('a[href], button:not([disabled])')?.focus();
+        });
+    }
+});
 </script>
 
 <template>
@@ -121,111 +170,40 @@ const showingNavigationDropdown = ref(false);
                             </div>
                         </div>
 
-                        <!-- Hamburger -->
+                        <!-- Hamburger (mobile only) -->
                         <div class="-me-2 flex items-center sm:hidden">
                             <button
-                                @click="
-                                    showingNavigationDropdown =
-                                        !showingNavigationDropdown
-                                "
-                                :aria-expanded="showingNavigationDropdown"
-                                aria-controls="responsive-navigation-menu"
-                                aria-label="Toggle navigation menu"
+                                @click="mobileMenuOpen = !mobileMenuOpen"
+                                :aria-label="mobileMenuOpen ? 'Close menu' : 'Open menu'"
+                                :aria-expanded="mobileMenuOpen"
+                                aria-controls="mobile-overlay"
                                 class="inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
                             >
                                 <svg
+                                    v-if="!mobileMenuOpen"
                                     class="h-6 w-6"
                                     stroke="currentColor"
                                     fill="none"
                                     viewBox="0 0 24 24"
+                                    aria-hidden="true"
                                 >
-                                    <path
-                                        :class="{
-                                            hidden: showingNavigationDropdown,
-                                            'inline-flex':
-                                                !showingNavigationDropdown,
-                                        }"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M4 6h16M4 12h16M4 18h16"
-                                    />
-                                    <path
-                                        :class="{
-                                            hidden: !showingNavigationDropdown,
-                                            'inline-flex':
-                                                showingNavigationDropdown,
-                                        }"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M6 18L18 6M6 6l12 12"
-                                    />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                                </svg>
+                                <svg
+                                    v-else
+                                    class="h-6 w-6"
+                                    stroke="currentColor"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                >
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                                 </svg>
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Responsive Navigation Menu -->
-                <div
-                    :class="{
-                        block: showingNavigationDropdown,
-                        hidden: !showingNavigationDropdown,
-                    }"
-                    id="responsive-navigation-menu"
-                    class="sm:hidden"
-                >
-                    <div class="space-y-1 pb-3 pt-2">
-                        <ResponsiveNavLink
-                            :href="route('dashboard')"
-                            :active="route().current('dashboard')"
-                        >
-                            Dashboard
-                        </ResponsiveNavLink>
-                        <ResponsiveNavLink :href="route('feed')" :active="route().current('feed')">
-                            Feed
-                        </ResponsiveNavLink>
-                        <ResponsiveNavLink :href="route('recommendations')" :active="route().current('recommendations')">
-                            For You
-                        </ResponsiveNavLink>
-                        <ResponsiveNavLink :href="route('users.search')" :active="route().current('users.search')">
-                            People
-                        </ResponsiveNavLink>
-                    </div>
-
-                    <!-- Responsive Settings Options -->
-                    <div
-                        class="border-t border-gray-200 pb-1 pt-4"
-                    >
-                        <div class="px-4">
-                            <div
-                                class="text-base font-medium text-gray-800"
-                            >
-                                {{ $page.props.auth.user.name }}
-                            </div>
-                            <div class="text-sm font-medium text-gray-500">
-                                {{ $page.props.auth.user.email }}
-                            </div>
-                        </div>
-
-                        <div class="mt-3 space-y-1">
-                            <ResponsiveNavLink :href="route('profile.edit')">
-                                Account Settings
-                            </ResponsiveNavLink>
-                            <ResponsiveNavLink :href="route('users.show', { user: $page.props.auth.user.id })">
-                                My Profile
-                            </ResponsiveNavLink>
-                            <ResponsiveNavLink
-                                :href="route('logout')"
-                                method="post"
-                                as="button"
-                            >
-                                Log Out
-                            </ResponsiveNavLink>
-                        </div>
-                    </div>
-                </div>
             </nav>
 
             <!-- Page Heading -->
@@ -244,5 +222,137 @@ const showingNavigationDropdown = ref(false);
             </main>
         </div>
         <Toast />
+
+        <!-- Mobile Fullscreen Overlay -->
+        <Teleport to="body">
+            <Transition name="mobile-menu">
+                <div
+                    v-if="mobileMenuOpen"
+                    id="mobile-overlay"
+                    ref="overlayRef"
+                    class="sm:hidden fixed inset-0 z-50 flex flex-col bg-white"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label="Navigation menu"
+                >
+                    <!-- Overlay Header -->
+                    <div class="flex h-16 shrink-0 items-center justify-between border-b border-gray-100 px-4">
+                        <Link
+                            :href="route('dashboard')"
+                            @click="closeMenu"
+                            class="flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:rounded"
+                        >
+                            <ApplicationLogo class="block h-9 w-auto fill-current" />
+                            <span class="text-lg font-bold tracking-tight text-indigo-600">Folio</span>
+                        </Link>
+                        <button
+                            @click="closeMenu"
+                            aria-label="Close menu"
+                            class="inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+                        >
+                            <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Overlay Nav Links -->
+                    <nav class="flex-1 overflow-y-auto px-6 pt-2" aria-label="Mobile navigation">
+                        <Link
+                            :href="route('dashboard')"
+                            @click="closeMenu"
+                            class="flex w-full items-center border-b border-gray-50 py-4 text-2xl font-medium transition"
+                            :class="route().current('dashboard') ? 'text-indigo-600' : 'text-gray-900 hover:text-indigo-600'"
+                        >
+                            Dashboard
+                        </Link>
+                        <Link
+                            :href="route('library')"
+                            @click="closeMenu"
+                            class="flex w-full items-center border-b border-gray-50 py-4 text-2xl font-medium transition"
+                            :class="route().current('library') ? 'text-indigo-600' : 'text-gray-900 hover:text-indigo-600'"
+                        >
+                            Library
+                        </Link>
+                        <Link
+                            :href="route('books.search')"
+                            @click="closeMenu"
+                            class="flex w-full items-center border-b border-gray-50 py-4 text-2xl font-medium transition"
+                            :class="route().current('books.search') ? 'text-indigo-600' : 'text-gray-900 hover:text-indigo-600'"
+                        >
+                            Search
+                        </Link>
+                        <Link
+                            :href="route('feed')"
+                            @click="closeMenu"
+                            class="flex w-full items-center border-b border-gray-50 py-4 text-2xl font-medium transition"
+                            :class="route().current('feed') ? 'text-indigo-600' : 'text-gray-900 hover:text-indigo-600'"
+                        >
+                            Feed
+                        </Link>
+                        <Link
+                            :href="route('recommendations')"
+                            @click="closeMenu"
+                            class="flex w-full items-center border-b border-gray-50 py-4 text-2xl font-medium transition"
+                            :class="route().current('recommendations') ? 'text-indigo-600' : 'text-gray-900 hover:text-indigo-600'"
+                        >
+                            For You
+                        </Link>
+                        <Link
+                            :href="route('users.search')"
+                            @click="closeMenu"
+                            class="flex w-full items-center border-b border-gray-50 py-4 text-2xl font-medium transition"
+                            :class="route().current('users.search') ? 'text-indigo-600' : 'text-gray-900 hover:text-indigo-600'"
+                        >
+                            People
+                        </Link>
+                    </nav>
+
+                    <!-- Overlay Footer -->
+                    <div class="mt-auto shrink-0 border-t border-gray-100 px-6 py-6">
+                        <div class="mb-4">
+                            <p class="text-sm font-medium text-gray-800">{{ $page.props.auth.user.name }}</p>
+                            <p class="text-xs text-gray-400">{{ $page.props.auth.user.email }}</p>
+                        </div>
+                        <div class="space-y-1">
+                            <Link
+                                :href="route('profile.edit')"
+                                @click="closeMenu"
+                                class="flex w-full items-center py-2 text-sm font-medium text-gray-700 transition hover:text-indigo-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:rounded"
+                            >
+                                Account Settings
+                            </Link>
+                            <Link
+                                :href="route('users.show', { user: $page.props.auth.user.id })"
+                                @click="closeMenu"
+                                class="flex w-full items-center py-2 text-sm font-medium text-gray-700 transition hover:text-indigo-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:rounded"
+                            >
+                                My Profile
+                            </Link>
+                            <Link
+                                :href="route('logout')"
+                                method="post"
+                                as="button"
+                                class="flex w-full items-center py-2 text-sm font-medium text-red-500 transition hover:text-red-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 focus-visible:rounded"
+                            >
+                                Log Out
+                            </Link>
+                        </div>
+                    </div>
+                </div>
+            </Transition>
+        </Teleport>
     </div>
 </template>
+
+<style scoped>
+.mobile-menu-enter-active,
+.mobile-menu-leave-active {
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+.mobile-menu-enter-from,
+.mobile-menu-leave-to {
+    transform: translateX(100%);
+    opacity: 0;
+}
+</style>

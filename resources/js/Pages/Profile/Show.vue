@@ -1,26 +1,26 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link, router } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
+import { useStatusBadge } from '@/composables/useStatusBadge';
 
 const props = defineProps({
     profileUser: Object,
     bookLogs: Array,
 });
 
-const statusLabel = {
-    read: 'Read',
-    reading: 'Reading',
-    want_to_read: 'Want to Read',
-};
-
-const statusClass = {
-    read: 'bg-green-100 text-green-700',
-    reading: 'bg-blue-100 text-blue-700',
-    want_to_read: 'bg-gray-100 text-gray-700',
-};
+const { statusLabel, statusClass } = useStatusBadge();
 
 const followLoading = ref(false);
+
+const websiteDomain = computed(() => {
+    if (!props.profileUser.website) return null;
+    try {
+        return new URL(props.profileUser.website).hostname.replace('www.', '');
+    } catch {
+        return props.profileUser.website;
+    }
+});
 
 function toggleFollow() {
     followLoading.value = true;
@@ -58,6 +58,33 @@ function toggleFollow() {
                         <div class="flex gap-6 mt-2 text-sm text-gray-600">
                             <span><strong class="text-gray-900">{{ profileUser.followersCount }}</strong> followers</span>
                             <span><strong class="text-gray-900">{{ profileUser.followingCount }}</strong> following</span>
+                        </div>
+
+                        <!-- Bio -->
+                        <p v-if="profileUser.bio" class="mt-2 text-sm text-gray-600 max-w-prose">
+                            {{ profileUser.bio }}
+                        </p>
+
+                        <!-- Metadata pills -->
+                        <div v-if="profileUser.location || profileUser.favorite_genre || profileUser.reading_goal || profileUser.website" class="mt-3 flex flex-wrap gap-y-1">
+                            <span v-if="profileUser.location" class="inline-flex items-center gap-1 text-sm text-gray-500 mr-4">
+                                📍 {{ profileUser.location }}
+                            </span>
+                            <span v-if="profileUser.favorite_genre" class="inline-flex items-center gap-1 text-sm text-gray-500 mr-4">
+                                📚 {{ profileUser.favorite_genre }}
+                            </span>
+                            <span v-if="profileUser.reading_goal" class="inline-flex items-center gap-1 text-sm text-gray-500 mr-4">
+                                🎯 {{ profileUser.reading_goal }} books/year goal
+                            </span>
+                            <a
+                                v-if="profileUser.website"
+                                :href="profileUser.website"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="inline-flex items-center gap-1 text-sm text-indigo-600 hover:underline mr-4 transition"
+                            >
+                                🔗 {{ websiteDomain }}
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -112,7 +139,7 @@ function toggleFollow() {
                         <div class="text-sm font-semibold leading-tight">{{ log.book.title }}</div>
                         <div class="text-xs text-gray-500 mt-0.5">{{ log.book.author }}</div>
                         <div class="flex items-center justify-between mt-1.5">
-                            <span :class="statusClass[log.status]" class="text-xs font-medium px-2 py-0.5 rounded-full" role="status">{{ statusLabel[log.status] }}</span>
+                            <span :class="statusClass[log.status]" role="status">{{ statusLabel[log.status] }}</span>
                             <span
                                 v-if="log.rating"
                                 class="text-xs text-yellow-500"
