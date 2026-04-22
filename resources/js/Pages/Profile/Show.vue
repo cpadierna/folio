@@ -56,8 +56,18 @@ function toggleFollow() {
                     <div>
                         <h1 class="text-2xl font-bold">{{ profileUser.name }}</h1>
                         <div class="flex gap-6 mt-2 text-sm text-gray-600">
-                            <span><strong class="text-gray-900">{{ profileUser.followersCount }}</strong> followers</span>
-                            <span><strong class="text-gray-900">{{ profileUser.followingCount }}</strong> following</span>
+                            <span>
+                                <Link
+                                    :href="route('users.followers', profileUser.id)"
+                                    class="font-medium text-gray-900 hover:text-indigo-600 transition-colors"
+                                >{{ profileUser.followersCount }}</Link> followers
+                            </span>
+                            <span>
+                                <Link
+                                    :href="route('users.following', profileUser.id)"
+                                    class="font-medium text-gray-900 hover:text-indigo-600 transition-colors"
+                                >{{ profileUser.followingCount }}</Link> following
+                            </span>
                         </div>
 
                         <!-- Bio -->

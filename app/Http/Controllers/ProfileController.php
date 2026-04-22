@@ -35,6 +35,34 @@ class ProfileController extends Controller
         ]);
     }
 
+    public function followers(User $user): Response
+    {
+        $followers = $user->followers()->withCount(['followers', 'following'])->get();
+
+        $followers->each(function ($follower) {
+            $follower->isFollowing = auth()->user()->following()->where('following_id', $follower->id)->exists();
+        });
+
+        return Inertia::render('Profile/Followers', [
+            'profileUser' => ['id' => $user->id, 'name' => $user->name],
+            'users' => $followers,
+        ]);
+    }
+
+    public function following(User $user): Response
+    {
+        $followingUsers = $user->following()->withCount(['followers', 'following'])->get();
+
+        $followingUsers->each(function ($following) {
+            $following->isFollowing = auth()->user()->following()->where('following_id', $following->id)->exists();
+        });
+
+        return Inertia::render('Profile/Following', [
+            'profileUser' => ['id' => $user->id, 'name' => $user->name],
+            'users' => $followingUsers,
+        ]);
+    }
+
     /**
      * Display the user's profile form.
      */

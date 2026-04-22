@@ -41,6 +41,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/users/search', [UserSearchController::class, 'index'])->name('users.search');
     Route::get('/users/{user}', [ProfileController::class, 'show'])->name('users.show');
     Route::post('/users/{user}/follow', [FollowController::class, 'toggle'])->name('users.follow');
+    Route::get('/users/{user}/followers', [ProfileController::class, 'followers'])->name('users.followers');
+    Route::get('/users/{user}/following', [ProfileController::class, 'following'])->name('users.following');
     Route::get('/book-logs/{bookLog}', [BookLogController::class, 'show'])->name('book_logs.show');
     Route::post('/book-logs/{bookLog}/like', [LikeController::class, 'toggle'])->name('book_logs.like');
     Route::post('/book-logs/{bookLog}/comments', [CommentController::class, 'store'])->name('book_logs.comments.store');
