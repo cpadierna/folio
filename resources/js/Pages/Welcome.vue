@@ -82,33 +82,31 @@ const shelfBooks = computed(() => {
         </nav>
 
         <!-- HERO -->
-        <section class="flex min-h-screen items-center justify-center bg-white px-6">
-            <div class="max-w-3xl mx-auto text-center">
-                <h1 class="text-5xl font-bold leading-tight tracking-tight text-gray-900 md:text-6xl">
-                    Your reading life,<br />shared.
-                </h1>
-                <p class="mt-4 text-xl text-gray-500">
-                    Track every book. Discover what friends are reading.<br class="hidden sm:block" />
-                    Build a library that tells your story.
-                </p>
-                <div class="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
-                    <Link
-                        v-if="canRegister"
-                        :href="route('register')"
-                        aria-label="Get started free with Folio"
-                        class="rounded-full bg-indigo-600 px-8 py-3 text-base font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
-                    >
-                        Get started free
-                    </Link>
-                    <Link
-                        v-if="canLogin"
-                        :href="route('login')"
-                        class="text-base font-medium text-indigo-600 underline underline-offset-4 transition hover:text-indigo-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:rounded"
-                    >
-                        Sign in
-                    </Link>
-                </div>
+        <section class="hero-bg min-h-screen flex items-center justify-center py-32">
+          <div class="blob-1"></div>
+          <div class="blob-2"></div>
+          <div class="blob-3"></div>
+          <div class="dot-grid"></div>
+          <div class="hero-content max-w-3xl mx-auto text-center px-6">
+            <h1 class="text-5xl md:text-7xl font-bold text-gray-900 leading-tight tracking-tight">
+              Your reading life,<br>
+              <span class="gradient-text">shared.</span>
+            </h1>
+            <p class="mt-6 text-xl text-gray-500 max-w-xl mx-auto leading-relaxed">
+              Track every book. Discover what friends are reading.<br>
+              Build a library that tells your story.
+            </p>
+            <div class="mt-10 flex items-center justify-center gap-4 flex-wrap">
+              <Link v-if="canRegister" :href="route('register')"
+                class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-8 py-3.5 rounded-full text-base transition-colors shadow-lg shadow-indigo-200">
+                Get started free
+              </Link>
+              <Link v-if="canLogin" :href="route('login')"
+                class="text-indigo-600 hover:text-indigo-800 font-medium text-base underline underline-offset-2 transition-colors">
+                Sign in
+              </Link>
             </div>
+          </div>
         </section>
 
         <!-- BOOK SHELF -->
@@ -220,5 +218,72 @@ const shelfBooks = computed(() => {
 .shelf-scroll {
     -ms-overflow-style: none;
     scrollbar-width: none;
+}
+</style>
+
+<style scoped>
+.hero-bg {
+  position: relative;
+  overflow: hidden;
+  background: #ffffff;
+}
+.blob-1 {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.22) 0%, transparent 70%);
+  top: -100px;
+  left: -150px;
+  animation: drift1 10s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+.blob-2 {
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.18) 0%, transparent 70%);
+  bottom: -80px;
+  right: -100px;
+  animation: drift2 12s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+.blob-3 {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+  top: 40%;
+  left: 60%;
+  animation: drift1 14s ease-in-out infinite alternate-reverse;
+  pointer-events: none;
+}
+.dot-grid {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, #e0e7ff 1px, transparent 1px);
+  background-size: 28px 28px;
+  opacity: 0.5;
+  pointer-events: none;
+}
+.hero-content {
+  position: relative;
+  z-index: 10;
+}
+.gradient-text {
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+@keyframes drift1 {
+  0% { transform: translate(0px, 0px) scale(1); }
+  100% { transform: translate(18px, -8px) scale(1.04); }
+}
+@keyframes drift2 {
+  0% { transform: translate(0px, 0px) scale(1.03); }
+  100% { transform: translate(-18px, 8px) scale(1); }
 }
 </style>
